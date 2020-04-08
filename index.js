@@ -1,5 +1,10 @@
 const Expo = require('expo-server-sdk');
 const Airtable = require('airtable');
+const express = require('express')
+const app = express()
+const port = process.env.PORT || 8080;
+app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
+
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
