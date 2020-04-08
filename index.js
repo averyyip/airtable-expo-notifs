@@ -16,6 +16,7 @@ const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
 class NotificationsManager {
   constructor() {
     this.pushSettings = {};
+    this.sent = [];
   }
 
   addNotification(settings) {
@@ -24,10 +25,10 @@ class NotificationsManager {
 
   createPushMessages(records, settings) {
     records = records.filter((record) => {
-      const currTime = record.get(AirtableColumnEnum.timePosted);
-      const diffInSeconds = (Date.now() - Date.parse(currTime)) / 1000;
-      const isNewRecord = diffInSeconds <= (process.env['SECONDS_INTERVAL'] | 0);
-      return record.get(settings.tokenColumnName) && isNewRecord;
+      const isNewRecord = !this.sent.includes(record.getId());
+      isNewRecord ? this.sent.push(record.getId()) : null;
+      this.sent.length >= 100 ? this.sent.slice(50) : null;
+      return isNewRecord ? record.get(settings.tokenColumnName) : null;
     });
 
     return records.map((record) => {
@@ -76,6 +77,13 @@ class NotificationsManager {
       }
     })();
   }
+
+  async start() {
+    while (true) {
+      this.sendNotifications();
+      await new Promise(resolve => setTimeout(resolve, 5000));
+    }
+  }
 }
 
 function messagesTemplate(record) {
@@ -85,8 +93,11 @@ function messagesTemplate(record) {
 const manager = new NotificationsManager();
 manager.addNotification({
   table: "Messages", 
-  queryParams: {view: "main"},
+  queryParams: {
+    view: "main",
+    filterByFormula: 'DATETIME_DIFF(CREATED_TIME(), TODAY(), "days") = 0',
+  },
   recordTemplate: messagesTemplate,
   tokenColumnName: 'recipientTokens',
 });
-manager.sendNotifications();
+manager.start();
