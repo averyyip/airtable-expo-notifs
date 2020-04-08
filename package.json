@@ -4,7 +4,8 @@
   "description": "Script used to run scheduled jobs to check for new records and send to expo notification servers.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
