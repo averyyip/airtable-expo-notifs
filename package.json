@@ -23,6 +23,7 @@
   "dependencies": {
     "airtable": "^0.8.1",
     "expo-server-sdk": "^3.4.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "woke-dyno": "0.0.4"
   }
 }

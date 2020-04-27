@@ -1,9 +1,16 @@
 const Expo = require('expo-server-sdk');
 const Airtable = require('airtable');
 const express = require('express')
+const wakeDyno = require("woke-dyno");
+
+const DYNO_URL = 'https://trainee-1951coffee.herokuapp.com/';
+
 const app = express()
 const port = process.env.PORT || 8080;
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`);
+  wakeDyno(DYNO_URL).start(); // DYNO_URL should be the url of your Heroku app
+})
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
